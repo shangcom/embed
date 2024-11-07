@@ -22,7 +22,10 @@ tasks.named('test') {
     useJUnitPlatform()
 }
 
-//일반 Jar 생성
+/*
+일반 Jar 생성
+attributes 'Main-Class' : JAR 파일이 실행될 때 JVM이 가장 먼저 실행해야 하는 클래스를 지정
+ */
 task buildJar(type: Jar) {
     manifest {
         attributes 'Main-Class': 'hello.embed.EmbedTomcatSpringMain'

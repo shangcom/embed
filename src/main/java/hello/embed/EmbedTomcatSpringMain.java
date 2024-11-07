@@ -9,6 +9,8 @@ import org.apache.catalina.startup.Tomcat;
 import org.springframework.web.context.support.AnnotationConfigWebApplicationContext;
 import org.springframework.web.servlet.DispatcherServlet;
 
+import java.io.File;
+
 /**
  * 스프링 MVC 기반.
  * 스프링의 DispatcherServlet을 서블릿으로 등록하여 MVC 구조를 구현.
@@ -42,6 +44,19 @@ public class EmbedTomcatSpringMain {
 
         // 컨텍스트 설정
         Context context = tomcat.addContext("", "/");
+
+        /*
+         LifecycleException 발생 시 추가
+         인텔리제이에서의 실행: 프로젝트 루트를 기준으로 기본 경로가 자동으로 설정되어 문제가 발생하지 않음.
+         JAR 실행 시 문제: JAR 내부에서 경로를 찾지 못하기 때문에 명확히 경로를 설정해 줘야 함.
+         */
+        File docBaseFile = new File(context.getDocBase());
+        if (!docBaseFile.isAbsolute()) {
+            docBaseFile = new File(((org.apache.catalina.Host)
+                    context.getParent()).getAppBaseFile(), docBaseFile.getPath());
+        }
+        docBaseFile.mkdirs();
+        // 추가 끝
 
         tomcat.addServlet("", "dispatcher", dispatcher);
         context.addServletMappingDecoded("/", "dispatcher");
